@@ -48,4 +48,17 @@ class CategoryTest extends TestCase
 
     }
 
+    public function testFind()
+    {
+        $this->seed(CategorySeeder::class);
+
+        // $category = Category::query()->find("FOOD");
+        $category = Category::find("FOOD");
+
+        self::assertNotNull($category);
+        self::assertEquals("FOOD", $category->id);
+        self::assertEquals("Food", $category->name);
+        self::assertEquals("Food Category", $category->description);
+    }
+
 }
