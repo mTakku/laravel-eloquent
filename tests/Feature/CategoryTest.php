@@ -3,9 +3,16 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Product;
+use App\Models\Scopes\IsActiveScope;
+use Database\Seeders\CategorySeeder;
+use Database\Seeders\CustomerSeeder;
+use Database\Seeders\ProductSeeder;
+use Database\Seeders\ReviewSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use function PHPUnit\Framework\assertEquals;
 
 class CategoryTest extends TestCase
 {
@@ -18,4 +25,27 @@ class CategoryTest extends TestCase
 
         self::assertTrue($result);
     }
+
+    public function testInsertMany()
+    {
+        $categories = [];
+        for ($i = 0; $i < 10; $i++) {
+            $categories[] = [
+                "id" => "ID $i",
+                "name" => "Name $i",
+            ];
+        }
+
+        // $result = Category::query()->insert($categories);
+        $result = Category::insert($categories);
+
+        self::assertTrue($result);
+
+        // $total = Category::query()->count();
+        $total = Category::count();
+
+        self::assertEquals(10, $total);
+
+    }
+
 }
