@@ -8,221 +8,119 @@
 > - PHP 8.1.0
 > - LARAVEL 10.0.3
 >   ```
->   Composer Create-project laravel\laravel=v10.0.3 laravel-redis
+>   Composer Create-project laravel\laravel=v10.0.3 laravel-collection
 >   ```
-> - REDIS
-> - Tutorial instalasi redis
->   ```
->   https://www.youtube.com/watch?v=DLKzd3bvgt8&ab_channel=TrendingCode
->   ```
-> - Jika sudah pergi ke terminal dan masukan syntax ```redis-server```
 ---
-> #### APA ITU ELOQUENT?
-> Redis adalah salah satu database in Memory yang paling populer di dunia
-> banyak fitur di laravel bisa menggunakan redis seperti cache, session sampai rate limiting
-> 
-> #### REDIS COMMAND
-> - Untuk mengirim perintah ke redis, kita bisa menggunakan method command() di redis facade
-> - atau bisa langsung menggunakan nama method sesuai dengan command di redis
->
-> Berikut contoh ping redis:
->
-> ```
-> $response = Redis::command("ping");
-> self::assertEquals("PONG", $response);
->
-> $response = Redis::ping();
-> self::assertEquals("PONG", $response);
-> ```
->
-> #### STRING
-> - Command yang sering kita gunakan adlaah menggunakan set(),setEX(), M
->
-> Berikut contoh kode manipulasi collection :
-> ```
-> Redis::setex("name", 2, "Farel");
-> $response = Redis::get("name");
-> self::assertEquals("Farel", $response);
->
-> sleep(5);
->
-> $response = Redis::get("name");
-> self::assertNull($response);
-> ```
->
-> #### LIST
-> - 
->
-> Berikut salah satu contoh kode list :
-> ```
-> Redis::del("names");
->
-> Redis::rpush("names", "Farel");
-> Redis::rpush("names", "Mercys");
-> Redis::rpush("names", "Thona");
->
-> $response = Redis::lrange("names", 0, -1);
-> self::assertEquals(["Farel", "Mercys", "Thona"], $response);
->
-> self::assertEquals("Farel", Redis::lpop("names"));
-> self::assertEquals("Mercys", Redis::lpop("names"));
-> self::assertEquals("Thona", Redis::lpop("names"));
-> ```
-> #### SET
-> - 
->
-> Berikut contoh kode set :
->
-> ```
-> Redis::del("names");
-> 
-> Redis::sadd("names", "Farel");
-> Redis::sadd("names", "Farel");
-> Redis::sadd("names", "Mercys");
-> Redis::sadd("names", "Mercys");
-> Redis::sadd("names", "Thona");
-> Redis::sadd("names", "Thona");
->
-> $response = Redis::smembers("names");
-> self::assertEquals(["Farel", "Mercys", "Thona"], $response);
-> ```
+> #### APA ITU VALIDATION
+> - validasi di Laravel adalah proses memastikan data yang dimasukkan ke dalam aplikasi web Anda aman dan sesuai dengan yang diharapkan.
+> #### manfaat
+> - Meningkatkan keamanan aplikasi
+> - Memastikan data yang konsisten
+> - Mempermudah pengembangan aplikasi
+> - Menampilkan pesan error yang informatif
 ---
-> #### SORTED SET
-> - 
->
-> Berikut contoh kode sorted set :
+> #### VALIDATOR
+> - `Validator` dalam Laravel adalah kelas yang digunakan untuk memvalidasi data. Dengan `Validator`, Anda bisa menentukan aturan validasi, seperti memastikan bahwa input adalah string, panjangnya tidak melebihi batas tertentu, atau memenuhi format email.
+> - contoh sintaksnya :
 > ```
-> Redis::del("names");
+> $validator = Validator::make($data, $rules);
 >
-> Redis::zadd("names", 100, "Farel");
-> Redis::zadd("names", 100, "Farel");
-> Redis::zadd("names", 85, "Mercys");
-> Redis::zadd("names", 85, "Mercys");
-> Redis::zadd("names", 95, "Thona");
-> Redis::zadd("names", 95, "Thona");
->
-> $response = Redis::zrange("names", 0, -1);
-> self::assertEquals(["Mercys", "Thona", "Farel"], $response);
-> ```
-> #### HASH
-> -
->
-> berikut contoh kode hash :
-> ```
-> Redis::del("user:1");
->
-> Redis::hset("user:1", "name", "Farel");
-> Redis::hset("user:1", "email", "farel@localhost");
-> Redis::hset("user:1", "age", 30);\
->
-> $response = Redis::hgetall("user:1");
-> self::assertEquals([
->     "name" => "Farel",
->     "email" => "farel@localhost",
->     "age" => "18"
-> ], $response);
-> ```
-> #### GEO POINT
-> -
->
-> Berikut contoh salah satu kode geo point :
-> ```
-> Redis::del("sellers");
->
-> Redis::geoadd("sellers", 106.820990, -6.174704, "Toko A");
-> Redis::geoadd("sellers", 106.822696, -6.176870, "Toko B");
->
-> $result = Redis::geodist("sellers", "Toko A", "Toko B", "km");
-> self::assertEquals(0.3061, $result);
->
-> $result = Redis::geosearch("sellers", new FromLonLat(106.821666, -6.175494), new ByRadius(5, "km"));
-> self::assertEquals(["Toko A", "Toko B"], $result);
+> if ($validator->fails()) {
+>    // Tangani kesalahan jika validasi gagal
+> } else {
+>    // Lakukan tindakan jika validasi berhasil
 > }
 > ```
+> -Dalam contoh ini, `$data` adalah data yang ingin divalidasi, dan $rules adalah aturan validasi yang ditentukan. Jika validasi gagal, Anda bisa menangani kesalahan tersebut; jika tidak, 
+---
+> #### ERROR MESSAGE
+> - Error Message dalam Laravel adalah pesan yang memberi tahu pengguna tentang kesalahan dalam input yang mereka berikan. Ini muncul ketika validasi data gagal, membantu pengguna memahami masalahnya. Misalnya, "Email harus berupa alamat email yang valid." pesan kesalahan memberi tahu pengguna bahwa mereka harus memasukkan alamat email yang benar.
+---
+> #### VALIDATION EXCEPTION
+> - `ValidationException` dalam Laravel adalah pengecualian yang dilemparkan ketika validasi data gagal. Ketika Anda memvalidasi data dan ada kesalahan, Laravel secara otomatis melemparkan pengecualian ini. Anda dapat menangkapnya dalam kontroler atau bagian lain dari kode Anda untuk menangani kesalahan validasi dan memberikan respons yang sesuai kepada pengguna.
+> - contoh sintaksnya:
+>```
+>use Illuminate\Validation\ValidationException;
 >
-> #### HYPER LOG LOG
-> - 
->
-> Berikut contoh kode partitioning :
+>try {
+>    // Lakukan validasi data di sini
+>} catch (ValidationException $e) {
+>    // Tangani pengecualian validasi di sini
+>    $errors = $e->validator->errors()->all();
+>    return response()->json(['errors' => $errors], 422);
+>}
+>```
+> - Dalam blok `catch`, kita menangkap `ValidationException` dan kemudian dapat melakukan apa pun yang diperlukan, seperti mengambil pesan kesalahan validasi dari objek validator dan mengembalikannya kepada
+pengguna dalam bentuk yang sesuai. Hal ini memungkinkan aplikasi Anda untuk memberikan umpan balik yang tepat kepada pengguna ketika terjadi kesalahan validasi.
+---
+> #### VALIDATION RULES
+> - Aturan validasi dalam Laravel adalah kumpulan aturan yang digunakan untuk memeriksa data yang dimasukkan oleh pengguna. Ini termasuk memastikan data tidak kosong (`required`), adalah alamat email yang valid (`email`), merupakan bilangan (`numeric`), dll. Anda bisa menggunakan aturan ini untuk memvalidasi input dengan cepat dan tepat.
+---
+> #### VALID DATA
+> - Data yang valid adalah data yang sesuai dengan aturan validasi yang telah ditetapkan. Dalam konteks Laravel, ini berarti data yang memenuhi semua aturan validasi yang telah didefinisikan, seperti tidak kosong (required), memiliki format yang benar (misalnya, alamat email yang valid), atau memenuhi batasan tertentu (misalnya, panjang string minimum). Jadi, data yang valid adalah data yang lolos semua pengujian validasi yang telah ditetapkan untuk itu.
+---
+> #### VALIDATION MESSAGE
+> - Validation Message adalah pesan yang memberitahu pengguna tentang kesalahan yang terjadi saat validasi data. Ketika data yang dimasukkan pengguna tidak memenuhi aturan validasi yang telah ditetapkan, pesan validasi memberikan informasi tentang kesalahan tersebut. Pesan ini membantu pengguna memahami masalahnya dan dapat membimbing mereka untuk memperbaiki input mereka. Pesan validasi yang baik biasanya jelas dan informatif, memberikan petunjuk yang berguna kepada pengguna tentang apa yang salah dengan data yang mereka masukkan.
+---
+> #### ADDTIONAL VALIDATION
+> - Validasi tambahan adalah langkah-langkah validasi ekstra yang Anda terapkan untuk memeriksa data lebih lanjut setelah validasi standar. Ini bisa termasuk pengujian spesifik untuk kasus penggunaan tertentu atau memverifikasi data melawan layanan eksternal. Validasi tambahan membantu memastikan bahwa data yang dimasukkan memenuhi persyaratan lebih lanjut sesuai dengan kebutuhan aplikasi Anda.
+---
+> #### CUSTOM RULE
+> - Anda bisa membuat aturan validasi kustom dengan Laravel. Berikut langkahnya:
+>> 1. Gunakan perintah artisan untuk membuat aturan baru:
+>>```
+>>php artisan make:rule CustomRule
+>>```
+>> 2. Di dalam file yang baru dibuat (CustomRule.php), tentukan logika validasi di dalam metode `passes`.
+>>```
+>>public function passes($attribute, $value)
+>>{
+>>    // Logika validasi Anda di sini
+>>}
+>>```
+>> 3. Definisikan pesan kesalahan dalam metode `message`.
+>> ```
+>> public function message()
+>>{
+>>    return 'Pesan kesalahan kustom Anda di sini.';
+>>}
+>> ```
+>>  4. Gunakan aturan validasi kustom Anda dalam validasi Anda seperti aturan validasi bawaan lainnya.
+>> ```
+>> $request->validate([
+>>    'field' => ['required', new CustomRule],
+>>]);
+>>```
+---
+> #### RULE CLASSES
+> - Rule classes dalam Laravel adalah kelas yang menerapkan aturan validasi khusus. Dengan membuat rule class, Anda bisa memisahkan logika validasi dari kontroler, meningkatkan keterbacaan kode. Langkahnya: buat rule class, tentukan logika validasi dalam metode `passes`, definisikan pesan kesalahan dalam metode `message`, lalu gunakan rule class tersebut dalam validasi seperti aturan bawaan.
+---
+> #### NESTED ARRAY VALIDATION
+> - Anda bisa memvalidasi array bersarang dalam Laravel dengan menggunakan sintaks seperti ini:
 > ```
-> Redis::pfadd("visitors", "farel", "mercys", "putra");
-> Redis::pfadd("visitors", "farel", "zeta", "takku");
-> Redis::pfadd("visitors", "jasson", "zeta", "takku");
->
-> $result = Redis::pfcount("visitors");
-> self::assertEquals(6, $result);
-> ```
->
-> #### PIPELINE
-> - Kita bisa menggunakan method pipeline(), dimana kita bisa tambahkan callback function yang berisi perintah perintah yang akan dikerjakan dalam pipeline tersebut
->
-> Berikut contoh kode pipeline :
-> ```
-> Redis::pipeline(function ($pipeline){
->     $pipeline->setex("name", 2, "Farel");
->     $pipeline->setex("address", 2, "Indonesia");
-> });
->
-> $response = Redis::get("name");
-> self::assertEquals("Farel", $response);
-> $response = Redis::get("address");
-> self::assertEquals("Indonesia", $response);
-> ```
->
-> #### TRANSACTION
-> - Kita bisa menggunakan method transaction() dan cara penggunaannya sama seperti method pipeline()
->
-> Berikut contoh kode transaction :
-> ```
-> Redis::transaction(function ($pipeline){
->     $transaction->setex("name", 2, "Farel");
->     $transaction->setex("address", 2, "Indonesia");
-> });
->
-> $response = Redis::get("name");
-> self::assertEquals("Farel", $response);
-> $response = Redis::get("address");
-> self::assertEquals("Indonesia", $response);
-> ```
->
-> #### LARAVEL COMMAND
-> - Untuk melakukan pengetesan subscriber, kita akan membuat laravel command yaitu fitur untuk membuat perintah berbasis terminal kitab isa gunakan perintah ```php artisan make:command NamaCommand```
->
-> #### SUBSCRIBE PUBSUB
-> - 
->
-> Berikut contoh kode pubsub :
-> ```
-> for ($i = 0; $i < 10; $i++) {
->     Redis::publish("channel-1", "Hello World $i");
->     Redis::publish("channel-2", "Good Bye $i");
-> }
-> self::assertTrue(true);
-> ```
->
-> #### STREAM
-> - 
->
-> Berikut contoh kode stream :
-> ```
-> for ($i = 0; $i < 10; $i++) {
->     Redis::xadd("members", "*", [
->         "name" => "Farel $i",
->         "address" => "Indonesia"
->     ]);
-> }
-> self::assertTrue(true);
-> ```
->
-> #### CREATECONSUMER
->
-> berikut contoh kode createcosumer :
-> ```
-> Redis::xgroup("create", "members", "group1", "0");
-> Redis::xgroup("createconsumer", "members", "group1", "consumer-1");
-> Redis::xgroup("createconsumer", "members", "group1", "consumer-2");
-> self::assertTrue(true);
-> ```
+> $request->validate([
+>    'users.*.name' => 'required|string',
+>    'users.*.email' => 'required|email',
+>    'users.*.age' => 'required|integer|min:18',
+>]);
+>```
+> - Dalam contoh ini, kita memvalidasi setiap elemen dalam array `users`, memastikan bahwa setiap pengguna memiliki nama, email, dan usia yang sesuai dengan aturan validasi yang ditetapkan.
+---
+> #### HTTP REQUEST VALIDATION
+> - Validasi permintaan HTTP dalam Laravel memungkinkan Anda untuk memverifikasi data yang dikirim oleh pengguna melalui permintaan HTTP, seperti formulir web atau permintaan API.
+>> 1. Berikut salah satu contoh request validation :
+>> ```
+>> public function rules()
+>>{
+>>    return [
+>>        'title' => 'required|string|max:255',
+>>        'content' => 'required|string',
+>>        'tags' => 'nullable|array',
+>>        'tags.*' => 'string|max:50',
+>>    ];
+>> }
+>> ```
+---
 <p align="center" >
   <b>PERTANYAAN DAN CATATAN TAMBAHAN</b>
 </p>
